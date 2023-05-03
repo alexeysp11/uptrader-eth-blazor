@@ -41,7 +41,7 @@ namespace UptraderEth.EthApiServer
             var configurator = new UptraderEth.Common.Configurator(); 
             Settings = configurator.GetConfigSettings<EthApiServerSettings>(configFile, "EthApiServerSettings"); 
 
-            EthNodeCommunication = new EthNodeCommunication(); 
+            EthNodeCommunication = new EthNodeCommunication(Settings.Environment); 
 
             AddWebPaths(); 
         }
@@ -143,21 +143,11 @@ namespace UptraderEth.EthApiServer
             
             // Process request 
             EthApiOperation operation = JsonSerializer.Deserialize<EthApiOperation>(body);
-            // switch (operation.OperationName)
-            // {
-            //     case "enterpin": 
-            //         status = coreRouter.EnterPin(operation.CardNumber, operation.Pin); 
-            //         response = GetStatusString(status); 
-            //         break; 
-            //     case "checkbalance": 
-            //         response = coreRouter.CheckBalance(operation.CardNumber); 
-            //         break; 
-            //     default: 
-            //         throw new System.Exception("Incorrect operation name: " + operation.OperationName); 
-            // }
             operation.Status = GetStatusString(true); 
-            operation.WalletBalance = (new System.Random()).Next(0, 100); 
-            System.Threading.Thread.Sleep(1000); 
+            Task task = Task.Run(async () => {
+                operation.WalletBalance = await EthNodeCommunication.GetBalanceAsync(operation.WalletAddress); 
+            }); 
+            task.Wait(); 
             return System.Text.Json.JsonSerializer.Serialize(operation); 
         }
 
