@@ -1,0 +1,85 @@
+@page "/wallets"
+
+@using UptraderEthBlazor.Data
+@inject WalletService WalletService
+
+<h1>Wallets</h1>
+
+<p>Fetching data from ETH.</p>
+
+@if (walletRecords == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p>
+        Sorting: 
+        <select @bind="@SelectedSort">
+            <option value="idasc">ID (ascending)</option>
+            <option value="iddesc">ID (descending)</option>
+            <option value="balanceasc">Balance (ascending)</option>
+            <option value="balancedesc">Balance (descending)</option>
+        </select>
+    </p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Address</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var wallet in walletRecords)
+            {
+                <tr>
+                    <td>@wallet.Id</td>
+                    <td>@wallet.Address</td>
+                    <td>@wallet.Balance</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private string selectedSort; 
+    public string SelectedSort 
+    {
+        get { return selectedSort; }
+        set
+        {
+            selectedSort = value; 
+            sort[selectedSort](); 
+        }
+    } 
+
+    private Dictionary<string, Action> sort; 
+    private UptraderEth.Common.Models.Wallet[] walletRecords;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get all wallets 
+        walletRecords = await WalletService.GetWalletsAsync();
+
+        // Get balances for each wallet 
+        Task task = Task.Run(async () => {
+            foreach (var record in walletRecords)
+            {
+                record.Balance = await WalletService.GetBalanceAsync(record.Address); 
+                InvokeAsync(StateHasChanged);
+            }
+        });
+
+        // Initialize sorting 
+        sort = new Dictionary<string, Action>
+        {
+            ["iddesc"] = () => walletRecords = walletRecords.OrderByDescending(w => w.Id).ToArray(), 
+            ["idasc"] = () => walletRecords = walletRecords.OrderBy(w => w.Id).ToArray(),
+            ["balancedesc"] = () => walletRecords = walletRecords.OrderByDescending(w => w.Balance).ToArray(),
+            ["balanceasc"] = () => walletRecords = walletRecords.OrderBy(w => w.Balance).ToArray()
+        };
+    }
+}
