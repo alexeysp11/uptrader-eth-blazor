@@ -152,7 +152,7 @@ It means that the API server could process only one wallet address at a time.
 
 ## Secreenshots 
 
-![wallets_page](docs\img\wallets_page.png)
+![wallets_page](docs/img/wallets_page.png)
 
 ## How the project could be improved 
 
