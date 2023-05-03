@@ -12,7 +12,7 @@ namespace UptraderEthBlazor.Data
     public class WalletService
     {
         /// <summary>
-        /// 
+        /// Retrieves an array of wallets from the database 
         /// </summary> 
         public Task<UptraderEth.Common.Models.Wallet[]> GetWalletsAsync()
         {
@@ -30,7 +30,7 @@ namespace UptraderEthBlazor.Data
         }
 
         /// <summary>
-        /// 
+        /// Retrieves a balance of the wallet from API server 
         /// </summary>
         public Task<string> GetBalanceAsync(string address)
         {

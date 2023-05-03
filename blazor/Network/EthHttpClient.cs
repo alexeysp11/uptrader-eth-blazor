@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 namespace UptraderEthBlazor
 {
     /// <summary>
-    /// 
+    /// Represents an HTTP client for communicating with the API server 
     /// </summary>
     public class EthHttpClient 
     {
         /// <summary>
-        /// 
+        /// Instance of HTTP client (from System.Net.Http namespace)
         /// </summary>
         private static readonly HttpClient client = new HttpClient();
         
         /// <summary>
-        /// 
+        /// Implements simple HTTP GET request 
         /// </summary>
         public static string Get(string requestUri)
         {
@@ -37,7 +37,7 @@ namespace UptraderEthBlazor
         }
 
         /// <summary>
-        /// 
+        /// Implements simple HTTP POST request with parameters 
         /// </summary>
         public static string Post(string requestUri, Dictionary<string, string> values) 
         {

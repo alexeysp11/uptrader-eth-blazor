@@ -18,7 +18,7 @@ namespace UptraderEth.EthApiServer
         /// </summary>
         private EthApiServerSettings Settings { get; set; }
         /// <summary>
-        /// 
+        /// Communication with ETH node (or imition of it)
         /// </summary>
         private EthNodeCommunication EthNodeCommunication { get; } 
 
@@ -41,7 +41,7 @@ namespace UptraderEth.EthApiServer
             var configurator = new UptraderEth.Common.Configurator(); 
             Settings = configurator.GetConfigSettings<EthApiServerSettings>(configFile, "EthApiServerSettings"); 
 
-            EthNodeCommunication = new EthNodeCommunication(Settings.Environment); 
+            EthNodeCommunication = new EthNodeCommunication(Settings.UseEthConnection, Settings.Environment); 
 
             AddWebPaths(); 
         }
@@ -87,10 +87,6 @@ namespace UptraderEth.EthApiServer
                 string url = ctx.Request.Url.ToString(); 
                 string body = (new System.IO.StreamReader(ctx.Request.InputStream, ctx.Request.ContentEncoding)).ReadToEnd(); 
 
-                // 
-                System.Console.WriteLine("body: " + body); 
-                System.Console.WriteLine(ctx.Response.StatusCode + " " + ctx.Response.StatusDescription + ": " + ctx.Request.Url);
-
                 // Create response body 
                 string responseText = GetResponseText(url, body); 
                 byte[] buf = Encoding.UTF8.GetBytes(responseText);
@@ -100,6 +96,13 @@ namespace UptraderEth.EthApiServer
                 ctx.Response.ContentType = "text/html";
                 ctx.Response.ContentLength64 = buf.Length;
                 ctx.Response.OutputStream.Write(buf, 0, buf.Length);
+
+                // 
+                if (Settings.PrintHttpRequestProcInfo)
+                {
+                    System.Console.WriteLine("body: " + body); 
+                    System.Console.WriteLine(ctx.Response.StatusCode + " " + ctx.Response.StatusDescription + ": " + ctx.Request.Url);
+                }
 
                 ctx.Response.Close();
             }
@@ -117,7 +120,7 @@ namespace UptraderEth.EthApiServer
         private string GetResponseText(string url, string body)
         {
             // Check if path is valid 
-            if (!IsPathValid(url)) return "Path is not valid"; 
+            if (!IsPathValid(url)) return ProcessInvalidPath(url, body); 
 
             // Process product path request 
             if (url.Contains("/p/")) return ProcessProd(url, body); 
@@ -126,21 +129,17 @@ namespace UptraderEth.EthApiServer
             if (Settings.Environment.ToLower() == "test") 
             {
                 foreach (string path in Settings.HttpPathsDbg) 
-                    if (url.Contains(path)) return ProcessDbg(url);
+                    if (url.Contains(path)) return ProcessDbg(url, body);
             }
             
-            return "Page is not found";
+            return ProcessInvalidPath(url, body);
         }
 
         /// <summary>
-        /// 
+        /// Processes production path (main functionality of the application)
         /// </summary>
         private string ProcessProd(string url, string body)
         {
-            // 
-            bool status = false; 
-            string response = string.Empty; 
-            
             // Process request 
             EthApiOperation operation = JsonSerializer.Deserialize<EthApiOperation>(body);
             operation.Status = GetStatusString(true); 
@@ -152,11 +151,23 @@ namespace UptraderEth.EthApiServer
         }
 
         /// <summary>
-        /// 
+        /// Processes debug paths 
         /// </summary>
-        private string ProcessDbg(string url)
+        private string ProcessDbg(string url, string body)
         {
-            return "ProcessDbg"; 
+            EthApiOperation operation = JsonSerializer.Deserialize<EthApiOperation>(body);
+            operation.Status = GetStatusString(true); 
+            return System.Text.Json.JsonSerializer.Serialize(operation); 
+        }
+
+        /// <summary>
+        /// Processes invalid URL 
+        /// </summary>
+        private string ProcessInvalidPath(string url, string body)
+        {
+            EthApiOperation operation = JsonSerializer.Deserialize<EthApiOperation>(body);
+            operation.Status = GetStatusString(false); 
+            return System.Text.Json.JsonSerializer.Serialize(operation); 
         }
 
         /// <summary>

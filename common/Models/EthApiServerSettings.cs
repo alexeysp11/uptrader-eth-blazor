@@ -16,7 +16,7 @@ namespace UptraderEth.Common.Models
         public string Environment { get; set; }
 
         /// <summary>
-        /// 
+        /// Allows to use ETH connection (if this parameter is set to false, imitation of EHT node will be executed)
         /// </summary>
         public bool UseEthConnection { get; set; }
         
@@ -26,8 +26,13 @@ namespace UptraderEth.Common.Models
         public string[] HttpPathsDbg { get; set; }
 
         /// <summary>
-        /// 
+        /// Allows to print web paths that API server uses to listen to requests 
         /// </summary>
         public bool PrintWebPaths { get; set; }
+
+        /// <summary>
+        /// Allows to print debug information about processing HTTP requests 
+        /// </summary>
+        public bool PrintHttpRequestProcInfo { get; set; }
     }
 }

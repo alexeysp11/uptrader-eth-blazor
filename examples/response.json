@@ -1,27 +1,7 @@
 {
     "AppUid": "appuid632rbAbB325ao234", 
     "MethodName": "getbalance", 
-    "Wallets": [
-        {
-            "Address": "0xE276Bc378A527A8792B353cdCA5b5E53263DfB9e",
-            "Balance": "0.36452 ETH"
-        }, 
-        {
-            "Address": "0xb21c33DE1FAb3FA15499c62B59fe0cC3250020d1",
-            "Balance": "1.36452 ETH"
-        }, 
-        {
-            "Address": "0xd7d76c58b3a519e9fA6Cc4D22dC017259BC49F1E",
-            "Balance": "0.98452 ETH"
-        }, 
-        {
-            "Address": "0x25c4a76E7d118705e7Ea2e9b7d8C59930d8aCD3b",
-            "Balance": "2.20452 ETH"
-        }, 
-        {
-            "Address": "0x10F5d45854e038071485AC9e402308cF80D2d2fE",
-            "Balance": "0.65452 ETH"
-        }
-    ], 
-    "Status": "success"
+    "WalletAddress": "0xE276Bc378A527A8792B353cdCA5b5E53263DfB9e", 
+    "WalletBalance": "0.36452 ETH", 
+    "Status": "SUCCESS"
 }

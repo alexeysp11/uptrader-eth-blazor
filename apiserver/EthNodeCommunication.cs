@@ -5,26 +5,48 @@ using Nethereum.Web3;
 
 namespace UptraderEth.EthApiServer
 {
+    /// <summary>
+    /// Communication with ETH node (or imition of it)
+    /// </summary>
     public class EthNodeCommunication
     {
+        /// <summary>
+        /// Shows if connection with ETH node should be established or just imitated 
+        /// </summary>
+        private bool UseEthConnection { get; set; }
+        /// <summary>
+        /// Shows if the application is running in production or test mode. 
+        /// If it is running in test mode, communication with ETH node will be imitated
+        /// </summary>
         private string Environment { get; set; }
 
+        /// <summary>
+        /// Constructor of EthNodeCommunication
+        /// </summary>
         public EthNodeCommunication()
         {
+            UseEthConnection = true; 
             Environment = "production"; 
         }
-        public EthNodeCommunication(string environment)
+        /// <summary>
+        /// Constructor of EthNodeCommunication 
+        /// </summary>
+        public EthNodeCommunication(bool useEthConnection, string environment)
         {
+            UseEthConnection = useEthConnection; 
             Environment = environment; 
         }
 
+        /// <summary>
+        /// Allows to get balance of a wallet 
+        /// </summary>
         public Task<decimal> GetBalanceAsync(string address)
         {
             if (string.IsNullOrEmpty(address)) return Task.FromResult(0m); 
 
             decimal ethAmount = 0m; 
             Task task = Task.Run(async () => {
-                if (Environment == "production")
+                if (UseEthConnection && Environment == "production")
                 {
                     // ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
 

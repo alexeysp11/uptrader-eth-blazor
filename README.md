@@ -4,17 +4,22 @@ Blazor project that includes the page `Wallets`.
 
 On the page `Wallets` there is table with columns: `Id`, `Address`, `Balance` (data could be sorted by balance).  
 
-## Requirements 
+## Technical requirements 
 
-- `Netehereum.Web3`; 
+- `Netehereum.Web3` should be used; 
 - The page should work fast; 
 - Balance is not stored in the database, and they could be retrieved from ETH node; 
 - ETH testnet Sepolia ([alchemy](https://www.alchemy.com/) и [infura](https://www.infura.io/) are recomended); 
 - Communication with the node should be implemented as a separate API service.  
 
-## Code snippets 
+### Additional requirements 
 
-Wallet is implemented as follows: 
+- PostgreSQL; 
+- Entity Framework Core. 
+
+## Database entities 
+
+To store information about the wallet in the database, `Wallet` class is implemented as follows: 
 
 ```C#
 using System.ComponentModel.DataAnnotations.Schema;
@@ -29,72 +34,129 @@ namespace UptraderEthBlazor.Data
     public class Wallet
     {
         /// <summary>
-        /// 
+        /// ID of the wallet in the database
         /// </summary>
         public int? Id { get; set; }
         
         /// <summary>
-        /// 
+        /// Address of the wallet 
         /// </summary>
         public string Address { get; set; }
     }
 }
 ```
 
-<!-- 
+Note that this class is mapped against the database using `Entity Framework` and doesn't incudes all the field related to the wallet (because of the issue of compatibility between entities in the code and database). 
+
+Therefore there's a necessity to implement another class with the same name, but in the another namespace, which could be accessible in different modules of the project: 
+
+```C#
+namespace UptraderEth.Common.Models 
+{
+    /// <summary>
+    /// General representation of a wallet in the application (it is necessary because a wallet entity is
+    /// represented in the DB a little bit differently)
+    /// </summary>
+    public class Wallet
+    {
+        /// <summary>
+        /// ID of the wallet in the database 
+        /// </summary>
+        public int? Id { get; set; }
+        
+        /// <summary>
+        /// Address of the wallet 
+        /// </summary>
+        public string Address { get; set; }
+
+        /// <summary>
+        /// Balance of the wallet 
+        /// </summary>
+        public string Balance { get; set; }
+    }
+}
 ```
-dotnet tool install --global dotnet-ef --version 3.1.0 
-dotnet ef dbcontext scaffold "Host=localhost;Database=postgres;Username=postgres;Password=postgres" Npgsql.EntityFrameworkCore.PostgreSQL
-``` 
--->
 
-## API 
 
-Functionality: 
+## How to configure and run the application 
 
-- Gets JSON in a form: 
+1. PostgreSQL database 
+
+In order to initialize the database, copy all the content of `initdb/wallets.sql` file and execute it in PSQL.
+
+2. API server
+
+There's a `appsettings.json` file inside the folder of API server `apiserver` project. 
+The file contains configurational settings for the API server, for example: 
+
+```JSON 
+{
+    "EthApiServerSettings": {
+        "ServerAddress": "http://127.0.0.1:8080/ethapiserver/",
+        "Environment": "test",
+        "UseEthConnection": false,
+        "HttpPathsDbg": [
+            "/dbg/", 
+            "/test/"
+        ], 
+        "PrintWebPaths": false, 
+        "PrintHttpRequestProcInfo": true
+    }
+}
+```
+
+Class `Configurator`, that allows us to read data from JSON file, is located in the `common` module, since there is a possibility that config files could be used in other modules of the project as well. 
+
+According to the idea that `common` module is the module, that other modules depend on, you have to implement class for storing the API server setting in the scope of the `common` module (see `UptraderEth.Common.Models.EthApiServerSettings` class). 
+
+3. Running the application 
+
+First of all, you need to start the API server. 
+In order to do so, run the following command in CMD: 
+```
+runapiserver.cmd
+```
+
+Then start the Blazor application by running the following command: 
+```
+runblazor.cmd
+```
+
+## Communication with API server 
+
+Functionality of API server: 
+
+- Gets JSON as a request in a form (class `UptraderEth.Common.Models.EthApiOperation` allows to encode the request): 
 ```JSON
 {
     "AppUid": "appuid632rbAbB325ao234", 
     "MethodName": "getbalance", 
-    "WalletAddresses": [
-        "0xE276Bc378A527A8792B353cdCA5b5E53263DfB9e",
-        "0xb21c33DE1FAb3FA15499c62B59fe0cC3250020d1",
-        "0xd7d76c58b3a519e9fA6Cc4D22dC017259BC49F1E",
-        "0x25c4a76E7d118705e7Ea2e9b7d8C59930d8aCD3b",
-        "0x10F5d45854e038071485AC9e402308cF80D2d2fE"
-    ]
+    "WalletAddress": "0xE276Bc378A527A8792B353cdCA5b5E53263DfB9e"
 }
 ```
 
 - Sends requests to ETH, or imitates it 
 
-- Returns JSON in a form: 
+- Returns JSON as a response in a form: 
 ```JSON
 {
     "AppUid": "appuid632rbAbB325ao234", 
     "MethodName": "getbalance", 
-    "Wallets": [
-        {
-            "Address": "0xE276Bc378A527A8792B353cdCA5b5E53263DfB9e",
-            "Balance": "0.36452 ETH"
-        }, 
-        {
-            "Address": "0xb21c33DE1FAb3FA15499c62B59fe0cC3250020d1",
-            "Balance": "1.36452 ETH"
-        }, 
-        {
-            "Address": "0xd7d76c58b3a519e9fA6Cc4D22dC017259BC49F1E",
-            "Balance": "0.98452 ETH"
-        }, 
-        {
-            "Address": "0x25c4a76E7d118705e7Ea2e9b7d8C59930d8aCD3b",
-            "Balance": "2.20452 ETH"
-        }, 
-        {
-            "Address": "0x10F5d45854e038071485AC9e402308cF80D2d2fE",
-            "Balance": "0.65452 ETH"
-        }
-    ]
+    "WalletAddress": "0xE276Bc378A527A8792B353cdCA5b5E53263DfB9e", 
+    "WalletBalance": "0.36452 ETH", 
+    "Status": "SUCCESS"
 }
 ```
+
+It means that the API server could process only one wallet address at a time. 
+
+## Secreenshots 
+
+![wallets_page](docs\img\wallets_page.png)
+
+## How the project could be improved 
+
+- You can send an array of wallets, containing such fields as `Address` and `Balance`, to reduce number of requests to the server; 
+- In methods for processing HTTP requests inside `UptraderEth.EthApiServer.EthApiHttpServer` class, use `AppUid` and `MethodName` parameters (also check `null` parameters); 
+- Read the [issues](docs/Issues.md) file; 
+- Deploy API server and Blazor app. 
