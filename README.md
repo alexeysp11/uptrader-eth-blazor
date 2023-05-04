@@ -95,6 +95,7 @@ The file contains configurational settings for the API server, for example:
         "ServerAddress": "http://127.0.0.1:8080/ethapiserver/",
         "Environment": "test",
         "UseEthConnection": false,
+        "EthConnectionAddress": "https://mainnet.infura.io/v3/YOUR-API-KEY",
         "HttpPathsDbg": [
             "/dbg/", 
             "/test/"
@@ -104,6 +105,8 @@ The file contains configurational settings for the API server, for example:
     }
 }
 ```
+
+Read [infura getting started docs](https://docs.infura.io/infura/getting-started) to find out how you can get `YOUR-API-KEY`. 
 
 Class `Configurator`, that allows us to read data from JSON file, is located in the `common` module, since there is a possibility that config files could be used in other modules of the project as well. 
 
@@ -143,7 +146,7 @@ Functionality of API server:
     "AppUid": "appuid632rbAbB325ao234", 
     "MethodName": "getbalance", 
     "WalletAddress": "0xE276Bc378A527A8792B353cdCA5b5E53263DfB9e", 
-    "WalletBalance": "0.36452 ETH", 
+    "WalletBalance": "0.36452", 
     "Status": "SUCCESS"
 }
 ```
@@ -158,5 +161,4 @@ It means that the API server could process only one wallet address at a time.
 
 - You can send an array of wallets, containing such fields as `Address` and `Balance`, to reduce number of requests to the server; 
 - In methods for processing HTTP requests inside `UptraderEth.EthApiServer.EthApiHttpServer` class, use `AppUid` and `MethodName` parameters (also check `null` parameters); 
-- Read the [issues](docs/Issues.md) file; 
 - Deploy API server and Blazor app. 

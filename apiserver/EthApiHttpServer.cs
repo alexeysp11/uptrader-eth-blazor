@@ -41,7 +41,7 @@ namespace UptraderEth.EthApiServer
             var configurator = new UptraderEth.Common.Configurator(); 
             Settings = configurator.GetConfigSettings<EthApiServerSettings>(configFile, "EthApiServerSettings"); 
 
-            EthNodeCommunication = new EthNodeCommunication(Settings.UseEthConnection, Settings.Environment); 
+            EthNodeCommunication = new EthNodeCommunication(Settings.EthConnectionAddress, Settings.UseEthConnection, Settings.Environment); 
 
             AddWebPaths(); 
         }

@@ -11,6 +11,10 @@ namespace UptraderEth.EthApiServer
     public class EthNodeCommunication
     {
         /// <summary>
+        /// Address of the API node for retrieving ETH data 
+        /// </summary>
+        private string EthConnectionAddress { get; set; }
+        /// <summary>
         /// Shows if connection with ETH node should be established or just imitated 
         /// </summary>
         private bool UseEthConnection { get; set; }
@@ -31,8 +35,9 @@ namespace UptraderEth.EthApiServer
         /// <summary>
         /// Constructor of EthNodeCommunication 
         /// </summary>
-        public EthNodeCommunication(bool useEthConnection, string environment)
+        public EthNodeCommunication(string ethConnectionAddress, bool useEthConnection, string environment)
         {
+            EthConnectionAddress = ethConnectionAddress; 
             UseEthConnection = useEthConnection; 
             Environment = environment; 
         }
@@ -46,11 +51,11 @@ namespace UptraderEth.EthApiServer
 
             decimal ethAmount = 0m; 
             Task task = Task.Run(async () => {
-                if (UseEthConnection && Environment == "production")
+                if (UseEthConnection && !string.IsNullOrEmpty(EthConnectionAddress))
                 {
                     // ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
 
-                    var web3 = new Web3("https://ropsten.infura.io"); 
+                    var web3 = new Web3(EthConnectionAddress); 
                     var balance = await web3.Eth.GetBalance.SendRequestAsync(address);
                     ethAmount = Web3.Convert.FromWei(balance.Value); 
                 }

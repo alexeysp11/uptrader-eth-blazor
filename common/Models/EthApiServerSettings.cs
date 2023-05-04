@@ -19,6 +19,11 @@ namespace UptraderEth.Common.Models
         /// Allows to use ETH connection (if this parameter is set to false, imitation of EHT node will be executed)
         /// </summary>
         public bool UseEthConnection { get; set; }
+
+        /// <summary>
+        /// Address of the API node for retrieving ETH data 
+        /// </summary>
+        public string EthConnectionAddress { get; set; }
         
         /// <summary>
         /// HTTP paths that could be used for testing and debugging the server
