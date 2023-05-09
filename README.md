@@ -77,12 +77,11 @@ namespace UptraderEth.Common.Models
 }
 ```
 
-
 ## How to configure and run the application 
 
 1. PostgreSQL database 
 
-In order to initialize the database, copy all the content of `initdb/wallets.sql` file and execute it in PSQL.
+In order to initialize the database, copy all the content of `initdb/wallets.sql` file and execute it in PSQL or PgAdmin.
 
 2. API server
 
@@ -153,6 +152,19 @@ Functionality of API server:
 
 It means that the API server could process only one wallet address at a time. 
 
+## Deployment 
+
+### IIS 
+
+In order to deploy ASP.NET Blazor application on IIS, you need to take the following steps: 
+- Enable IIS using Control Panel; 
+- Download the .NET Core Hosting Bundle: click [here](https://dotnet.microsoft.com/en-us/download/dotnet), choose your version of dotnet and download **ASP.NET Core Runtime - Windows Hosting Bundle Installer**; 
+- Build the blazor server using this command: 
+```
+dotnet build && dotnet publish -c Release
+```
+- In *IIS Manager*, create new website, set port `8081` and run the website. 
+
 ## Secreenshots 
 
 ![wallets_page](docs/img/wallets_page.png)
@@ -161,4 +173,4 @@ It means that the API server could process only one wallet address at a time.
 
 - You can send an array of wallets, containing such fields as `Address` and `Balance`, to reduce number of requests to the server; 
 - In methods for processing HTTP requests inside `UptraderEth.EthApiServer.EthApiHttpServer` class, use `AppUid` and `MethodName` parameters (also check `null` parameters); 
-- Deploy API server and Blazor app. 
+- Deploy API server. 
