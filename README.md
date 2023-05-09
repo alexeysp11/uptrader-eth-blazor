@@ -93,7 +93,7 @@ The file contains configurational settings for the API server, for example:
     "EthApiServerSettings": {
         "ServerAddress": "http://127.0.0.1:8080/ethapiserver/",
         "Environment": "test",
-        "UseEthConnection": false,
+        "UseEthConnection": true,
         "EthConnectionAddress": "https://mainnet.infura.io/v3/YOUR-API-KEY",
         "HttpPathsDbg": [
             "/dbg/", 
@@ -107,11 +107,34 @@ The file contains configurational settings for the API server, for example:
 
 Read [infura getting started docs](https://docs.infura.io/infura/getting-started) to find out how you can get `YOUR-API-KEY`. 
 
+If you don't have `YOUR-API-KEY`, just set `UseEthConnection` to `false`. 
+It'll allow you to imitate node server. 
+
 Class `Configurator`, that allows us to read data from JSON file, is located in the `common` module, since there is a possibility that config files could be used in other modules of the project as well. 
 
 According to the idea that `common` module is the module, that other modules depend on, you have to implement class for storing the API server setting in the scope of the `common` module (see `UptraderEth.Common.Models.EthApiServerSettings` class). 
 
-3. Running the application 
+3. Blazor app
+
+Edit `appsettings.json` the following way: 
+```JSON 
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*", 
+  "AppSettings": {
+    "AppUid": "appuid632rbAbB325ao234",
+    "ApiServerAddress": "http://127.0.0.1:8080/ethapiserver/p/"
+  }
+}
+```
+
+4. Running the application 
 
 First of all, you need to start the API server. 
 In order to do so, run the following command in CMD: 
@@ -163,7 +186,25 @@ In order to deploy ASP.NET Blazor application on IIS, you need to take the follo
 ```
 dotnet build && dotnet publish -c Release
 ```
-- In *IIS Manager*, create new website, set port `8081` and run the website. 
+- Edit `web.config` file: 
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <location path="." inheritInChildApplications="false">
+    <system.webServer>
+      <handlers>
+        <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModuleV2" resourceType="Unspecified" />
+      </handlers>
+      <aspNetCore processPath="dotnet" arguments=".\UptraderEthBlazor.dll" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="inprocess" >
+		<environmentVariables>
+		  <environmentVariable name="ASPNETCORE_ENVIRONMENT" value="Development" />
+	    </environmentVariables>
+	  </aspNetCore>
+    </system.webServer>
+  </location>
+</configuration>
+```
+- In *IIS Manager*, create new website, set port `8081` and run the website (make sure that your API server is not using the same port). 
 
 ## Secreenshots 
 
@@ -173,4 +214,5 @@ dotnet build && dotnet publish -c Release
 
 - You can send an array of wallets, containing such fields as `Address` and `Balance`, to reduce number of requests to the server; 
 - In methods for processing HTTP requests inside `UptraderEth.EthApiServer.EthApiHttpServer` class, use `AppUid` and `MethodName` parameters (also check `null` parameters); 
+- Implement caching (e.g. using MongoDB); 
 - Deploy API server. 

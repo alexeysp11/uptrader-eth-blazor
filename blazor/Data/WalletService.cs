@@ -11,6 +11,15 @@ namespace UptraderEthBlazor.Data
     /// </summary>
     public class WalletService
     {
+        private string AppUid; 
+        private string ApiServerAddress;
+        
+        public WalletService(string appUid, string apiServerAddress)
+        {
+            AppUid = appUid; 
+            ApiServerAddress = apiServerAddress; 
+        }
+
         /// <summary>
         /// Retrieves an array of wallets from the database 
         /// </summary> 
@@ -41,11 +50,11 @@ namespace UptraderEthBlazor.Data
                 // Send request to the API server 
                 var values = new Dictionary<string, string>
                 {
-                    { "AppUid", "appuid632rbAbB325ao234" },
+                    { "AppUid", AppUid },
                     { "MethodName", "getbalance" },
                     { "WalletAddress", address }
                 };
-                string response = EthHttpClient.Post("http://127.0.0.1:8080/ethapiserver/p/", values); 
+                string response = EthHttpClient.Post(ApiServerAddress, values); 
 
                 // Parse response 
                 EthApiOperation operation = System.Text.Json.JsonSerializer.Deserialize<EthApiOperation>(response);
