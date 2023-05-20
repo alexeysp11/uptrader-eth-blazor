@@ -135,7 +135,7 @@ Edit `appsettings.json` the following way:
 }
 ```
 
-Paramer `UsePlaceholders` is allows to use *Bootstrap placeholders* for displaying data that is not loaded yet. 
+Paramer `UsePlaceholders` is allows to use [Bootstrap placeholders](https://getbootstrap.com/docs/5.3/components/placeholders/) for displaying data that is not loaded yet. 
 
 4. Running the application 
 
