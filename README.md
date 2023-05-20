@@ -129,10 +129,13 @@ Edit `appsettings.json` the following way:
   "AllowedHosts": "*", 
   "AppSettings": {
     "AppUid": "appuid632rbAbB325ao234",
-    "ApiServerAddress": "http://127.0.0.1:8080/ethapiserver/p/"
+    "ApiServerAddress": "http://127.0.0.1:8080/ethapiserver/p/", 
+    "UsePlaceholders": false
   }
 }
 ```
+
+Paramer `UsePlaceholders` is allows to use *Bootstrap placeholders* for displaying data that is not loaded yet. 
 
 4. Running the application 
 
@@ -215,4 +218,5 @@ dotnet build && dotnet publish -c Release
 - You can send an array of wallets, containing such fields as `Address` and `Balance`, to reduce number of requests to the server; 
 - In methods for processing HTTP requests inside `UptraderEth.EthApiServer.EthApiHttpServer` class, use `AppUid` and `MethodName` parameters (also check `null` parameters); 
 - Implement caching (e.g. using MongoDB); 
-- Deploy API server. 
+- Deploy API server (e.g. it could be implemented as WebAPI);
+- API continues processing data after blazor app is not on the **Wallets page**. 

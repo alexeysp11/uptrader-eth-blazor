@@ -13,11 +13,13 @@ namespace UptraderEthBlazor.Data
     {
         private string AppUid; 
         private string ApiServerAddress;
+        public bool UsePlaceholders { get; private set; } 
         
-        public WalletService(string appUid, string apiServerAddress)
+        public WalletService(string appUid, string apiServerAddress, bool usePlaceholders)
         {
             AppUid = appUid; 
             ApiServerAddress = apiServerAddress; 
+            UsePlaceholders = usePlaceholders; 
         }
 
         /// <summary>

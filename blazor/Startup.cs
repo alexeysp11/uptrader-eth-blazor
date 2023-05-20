@@ -29,9 +29,13 @@ namespace UptraderEthBlazor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WalletService>(ws => new WalletService(
-                Configuration.GetSection("AppSettings")["AppUid"],
-                Configuration.GetSection("AppSettings")["ApiServerAddress"]));
+            services.AddSingleton<WalletService>(ws => 
+                new WalletService(
+                    Configuration.GetSection("AppSettings")["AppUid"],
+                    Configuration.GetSection("AppSettings")["ApiServerAddress"],
+                    bool.Parse(Configuration.GetSection("AppSettings")["UsePlaceholders"])
+                )
+            );
             services.AddDbContext<WalletContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("WalletContext")));
         }
