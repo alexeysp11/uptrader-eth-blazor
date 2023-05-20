@@ -37,7 +37,15 @@ else
                 <tr>
                     <td>@wallet.Id</td>
                     <td>@wallet.Address</td>
-                    <td>@wallet.Balance</td>
+                    <td>@if(wallet.Balance.ToLower().Contains("loading")) 
+                    {
+                        <span class="placeholder">@wallet.Balance</span>
+                    }
+                    else
+                    {
+                        <span>@wallet.Balance</span>
+                    }
+                    </td>
                 </tr>
             }
         </tbody>
