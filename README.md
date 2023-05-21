@@ -226,10 +226,10 @@ dotnet build && dotnet publish -c Release
         <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModuleV2" resourceType="Unspecified" />
       </handlers>
       <aspNetCore processPath="dotnet" arguments=".\UptraderEthBlazor.dll" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="inprocess" >
-		<environmentVariables>
-		  <environmentVariable name="ASPNETCORE_ENVIRONMENT" value="Development" />
-	    </environmentVariables>
-	  </aspNetCore>
+        <environmentVariables>
+          <environmentVariable name="ASPNETCORE_ENVIRONMENT" value="Development" />
+        </environmentVariables>
+	    </aspNetCore>
     </system.webServer>
   </location>
 </configuration>
