@@ -17,6 +17,14 @@ On the page `Wallets` there is table with columns: `Id`, `Address`, `Balance` (d
 - PostgreSQL; 
 - Entity Framework Core. 
 
+## Brief description of the architecture 
+
+The application is supposed to work as follows: 
+
+![simplified_arch](docs/img/simplified_arch.png)
+
+Note: Blazor app and API server should be deployed separately. 
+
 ## Database entities 
 
 To store information about the wallet in the database, `Wallet` class is implemented as follows: 
@@ -92,17 +100,27 @@ The file contains configurational settings for the API server, for example:
 {
     "EthApiServerSettings": {
         "ServerAddress": "http://127.0.0.1:8080/ethapiserver/",
-        "Environment": "test",
-        "UseEthConnection": true,
+        "Environment": "production",
+        
+        "UseEthConnection": false,
         "EthConnectionAddress": "https://mainnet.infura.io/v3/YOUR-API-KEY",
+
         "HttpPathsDbg": [
             "/dbg/", 
             "/test/"
         ], 
         "PrintWebPaths": false, 
-        "PrintHttpRequestProcInfo": true
+        "PrintHttpRequestProcInfo": true,
+
+        "UseCaching": true, 
+        "CachingStorageTime": {
+            "Days": 0,
+            "Hours": 0, 
+            "Minutes": 15
+        }
     }
 }
+
 ```
 
 Read [infura getting started docs](https://docs.infura.io/infura/getting-started) to find out how you can get `YOUR-API-KEY`. 
@@ -127,10 +145,19 @@ Edit `appsettings.json` the following way:
     }
   },
   "AllowedHosts": "*", 
+
   "AppSettings": {
     "AppUid": "appuid632rbAbB325ao234",
     "ApiServerAddress": "http://127.0.0.1:8080/ethapiserver/p/", 
-    "UsePlaceholders": false
+
+    "UsePlaceholders": false,
+
+    "UseCaching": true, 
+    "CachingStorageTime": {
+      "Days": 0,
+      "Hours": 0, 
+      "Minutes": 15
+    }
   }
 }
 ```
@@ -218,5 +245,6 @@ dotnet build && dotnet publish -c Release
 - You can send an array of wallets, containing such fields as `Address` and `Balance`, to reduce number of requests to the server; 
 - In methods for processing HTTP requests inside `UptraderEth.EthApiServer.EthApiHttpServer` class, use `AppUid` and `MethodName` parameters (also check `null` parameters); 
 - Implement caching (e.g. using MongoDB); 
+- Implement encryption for data that is sent via network; 
 - Deploy API server (e.g. it could be implemented as WebAPI);
 - API continues processing data after blazor app is not on the **Wallets page**. 
