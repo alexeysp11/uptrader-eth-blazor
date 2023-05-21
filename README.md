@@ -229,7 +229,7 @@ dotnet build && dotnet publish -c Release
         <environmentVariables>
           <environmentVariable name="ASPNETCORE_ENVIRONMENT" value="Development" />
         </environmentVariables>
-	    </aspNetCore>
+      </aspNetCore>
     </system.webServer>
   </location>
 </configuration>
