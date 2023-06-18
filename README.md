@@ -1,5 +1,7 @@
 # uptrader-eth-blazor 
 
+Read this in other languages: [English](README.md), [Russian/Русский](README.ru.md). 
+
 Blazor project that includes the page `Wallets`. 
 
 On the page `Wallets` there is table with columns: `Id`, `Address`, `Balance` (data could be sorted by balance).  
@@ -9,7 +11,7 @@ On the page `Wallets` there is table with columns: `Id`, `Address`, `Balance` (d
 - `Netehereum.Web3` should be used; 
 - The page should work fast; 
 - Balance is not stored in the database, and they could be retrieved from ETH node; 
-- ETH testnet Sepolia ([alchemy](https://www.alchemy.com/) и [infura](https://www.infura.io/) are recomended); 
+- ETH testnet Sepolia ([alchemy](https://www.alchemy.com/) and [infura](https://www.infura.io/) are recomended); 
 - Communication with the node should be implemented as a separate API service.  
 
 ### Additional requirements 
@@ -54,9 +56,9 @@ namespace UptraderEthBlazor.Data
 }
 ```
 
-Note that this class is mapped against the database using `Entity Framework` and doesn't incudes all the field related to the wallet (because of the issue of compatibility between entities in the code and database). 
+Note that this class is mapped against the database using `Entity Framework` and, according to the technical requirements, doesn't incudes all the field related to the wallet (because of the issue of compatibility between entities in the code and database). 
 
-Therefore there's a necessity to implement another class with the same name, but in the another namespace, which could be accessible in different modules of the project: 
+Therefore there's a necessity to implement another class with the same name, but in the another namespace, which could be accessible in different modules of the project (so it defined in `UptraderEth.Common.Models` namespace): 
 
 ```C#
 namespace UptraderEth.Common.Models 
@@ -93,7 +95,7 @@ In order to initialize the database, copy all the content of `initdb/wallets.sql
 
 2. API server
 
-There's a `appsettings.json` file inside the folder of API server `apiserver` project. 
+There's `appsettings.json` file inside `apiserver` folder, in which the API server project is located. 
 The file contains configurational settings for the API server, for example: 
 
 ```JSON 
@@ -125,16 +127,17 @@ The file contains configurational settings for the API server, for example:
 
 Read [infura getting started docs](https://docs.infura.io/infura/getting-started) to find out how you can get `YOUR-API-KEY`. 
 
-If you don't have `YOUR-API-KEY`, just set `UseEthConnection` to `false`. 
+If you don't have `YOUR-API-KEY` or you don't want to use it, just set `UseEthConnection` to `false` (inside `appsettings.json` file). 
 It'll allow you to imitate node server. 
 
-Class `Configurator`, that allows us to read data from JSON file, is located in the `common` module, since there is a possibility that config files could be used in other modules of the project as well. 
+Class `Configurator`, that allows us to read data from JSON file, is located in the `common` module (since there is a possibility that config files could be used in other modules of the project as well). 
 
 According to the idea that `common` module is the module, that other modules depend on, you have to implement class for storing the API server setting in the scope of the `common` module (see `UptraderEth.Common.Models.EthApiServerSettings` class). 
 
 3. Blazor app
 
 Edit `appsettings.json` the following way: 
+
 ```JSON 
 {
   "Logging": {
@@ -162,12 +165,12 @@ Edit `appsettings.json` the following way:
 }
 ```
 
-Paramer `UsePlaceholders` is allows to use [Bootstrap placeholders](https://getbootstrap.com/docs/5.3/components/placeholders/) for displaying data that is not loaded yet. 
+Paramer `UsePlaceholders` allows to use [Bootstrap placeholders](https://getbootstrap.com/docs/5.3/components/placeholders/) for displaying data that is not loaded yet. 
 
 4. Running the application 
 
-First of all, you need to start the API server. 
-In order to do so, run the following command in CMD: 
+First of all, you need to start the API server (run the following command in CMD): 
+
 ```
 runapiserver.cmd
 ```
@@ -181,7 +184,8 @@ runblazor.cmd
 
 Functionality of API server: 
 
-- Gets JSON as a request in a form (class `UptraderEth.Common.Models.EthApiOperation` allows to encode the request): 
+- Gets JSON as a request in the following form (class `UptraderEth.Common.Models.EthApiOperation` allows to encode the request): 
+
 ```JSON
 {
     "AppUid": "appuid632rbAbB325ao234", 
@@ -190,9 +194,10 @@ Functionality of API server:
 }
 ```
 
-- Sends requests to ETH, or imitates it 
+- Establishes communication with the ETH node and sends requests to it, or at least imitates the communication; 
 
-- Returns JSON as a response in a form: 
+- Returns JSON as a response in the following form: 
+
 ```JSON
 {
     "AppUid": "appuid632rbAbB325ao234", 
@@ -203,15 +208,16 @@ Functionality of API server:
 }
 ```
 
-It means that the API server could process only one wallet address at a time. 
+The JSON requests and responses, presented above, show that the API server could process only one wallet address at a time. 
 
 ## Deployment 
 
 ### IIS 
 
 In order to deploy ASP.NET Blazor application on IIS, you need to take the following steps: 
+
 - Enable IIS using Control Panel; 
-- Download the .NET Core Hosting Bundle: click [here](https://dotnet.microsoft.com/en-us/download/dotnet), choose your version of dotnet and download **ASP.NET Core Runtime - Windows Hosting Bundle Installer**; 
+- Download the .NET Core Hosting Bundle: [click here](https://dotnet.microsoft.com/en-us/download/dotnet), choose your version of dotnet and download **ASP.NET Core Runtime - Windows Hosting Bundle Installer**; 
 - Build the blazor server using this command: 
 ```
 dotnet build && dotnet publish -c Release
@@ -234,17 +240,12 @@ dotnet build && dotnet publish -c Release
   </location>
 </configuration>
 ```
-- In *IIS Manager*, create new website, set port `8081` and run the website (make sure that your API server is not using the same port). 
+- In *IIS Manager*, create new website, set port `8081` and run the website (make sure that your API server is not using the same port that Blazor app is using). 
 
 ## Secreenshots 
 
 ![wallets_page](docs/img/wallets_page.png)
 
-## How the project could be improved 
+## How to contribute 
 
-- You can send an array of wallets, containing such fields as `Address` and `Balance`, to reduce number of requests to the server; 
-- In methods for processing HTTP requests inside `UptraderEth.EthApiServer.EthApiHttpServer` class, use `AppUid` and `MethodName` parameters (also check `null` parameters); 
-- Implement caching (e.g. using MongoDB); 
-- Implement encryption for data that is sent via network; 
-- Deploy API server (e.g. it could be implemented as WebAPI);
-- API continues processing data after blazor app is not on the **Wallets page**. 
+- [How the project could be improved](docs/TODO.md) 
