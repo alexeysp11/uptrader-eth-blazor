@@ -1,1 +1,1 @@
-dotnet run -p apiserver/ApiServer.csproj
+dotnet run --project apiserver/ApiServer.csproj

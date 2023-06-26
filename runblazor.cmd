@@ -1,1 +1,1 @@
-dotnet run -p blazor/UptraderEthBlazor.csproj 
+dotnet run --project blazor/UptraderEthBlazor.csproj 

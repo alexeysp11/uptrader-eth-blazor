@@ -89,11 +89,16 @@ namespace UptraderEth.Common.Models
 
 ## Как сконфигурировать и запустить приложение 
 
-1. База данных PostgreSQL 
+1. Восстановить проекты 
 
-Для того, чтобы инициализровать БД, можно скопировать содержимое файла `initdb/wallets.sql` и выполнить в PSQL или PgAdmin. 
+Для восстановления проектов используйте файл `restore.cmd`.
 
-2. API сервер
+2. База данных PostgreSQL 
+
+    - Запустить PostgreSQL server. 
+    - Инициализровать БД: скопировать содержимое файла `initdb/wallets.sql` и выполнить в PSQL или PgAdmin.
+
+3. API сервер
 
 Обратите внимание на файл `appsettings.json`, которые находится в папке `apiserver`, в которой находится проект для API сервера. 
 Данный файл содержит конфигурационные настройки для API сервера, например:
@@ -134,7 +139,7 @@ namespace UptraderEth.Common.Models
 
 Согласно идее того, что от модуля `common` зависят другие модули данного приложения, необходимо реализовать класс для хранения настроек API сервера внутри модуля `common` (например, класс `UptraderEth.Common.Models.EthApiServerSettings`). 
 
-3. Приложение Blazor 
+4. Приложение Blazor 
 
 Отредактируйте `appsettings.json` следующим образом: 
 
@@ -167,7 +172,7 @@ namespace UptraderEth.Common.Models
 
 Параметр `UsePlaceholders` позволяет использовать [Bootstrap placeholders](https://getbootstrap.com/docs/5.3/components/placeholders/) для данных, которые ещё не были загружены с сервера. 
 
-4. Запуск приложения 
+5. Запуск приложения 
 
 Сначала, необходимо запустить API сервер: 
 

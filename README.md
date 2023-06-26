@@ -89,11 +89,15 @@ namespace UptraderEth.Common.Models
 
 ## How to configure and run the application 
 
-1. PostgreSQL database 
+1. Restore the projects
 
-In order to initialize the database, copy all the content of `initdb/wallets.sql` file and execute it in PSQL or PgAdmin.
+In order to restore the projects, use the `restore.cmd` file. 
 
-2. API server
+2. PostgreSQL database 
+    - Start PostgreSQL server. 
+    - Initialize the database: copy all the content of `initdb/wallets.sql` file and execute it in PSQL or PgAdmin.
+
+3. API server
 
 There's `appsettings.json` file inside `apiserver` folder, in which the API server project is located. 
 The file contains configurational settings for the API server, for example: 
@@ -134,7 +138,7 @@ Class `Configurator`, that allows us to read data from JSON file, is located in 
 
 According to the idea that `common` module is the module, that other modules depend on, you have to implement class for storing the API server setting in the scope of the `common` module (see `UptraderEth.Common.Models.EthApiServerSettings` class). 
 
-3. Blazor app
+4. Blazor app
 
 Edit `appsettings.json` the following way: 
 
@@ -167,7 +171,7 @@ Edit `appsettings.json` the following way:
 
 Paramer `UsePlaceholders` allows to use [Bootstrap placeholders](https://getbootstrap.com/docs/5.3/components/placeholders/) for displaying data that is not loaded yet. 
 
-4. Running the application 
+5. Running the application 
 
 First of all, you need to start the API server (run the following command in CMD): 
 
