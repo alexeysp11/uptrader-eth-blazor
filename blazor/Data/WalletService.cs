@@ -11,6 +11,8 @@ namespace UptraderEthBlazor.Data
     /// </summary>
     public class WalletService
     {
+        private WalletCaching WalletCaching = new WalletCaching(); 
+
         private string AppUid; 
         private string ApiServerAddress;
         public bool UsePlaceholders { get; private set; } 
@@ -49,18 +51,30 @@ namespace UptraderEthBlazor.Data
             
             decimal ethAmount = 0m; 
             Task task = Task.Run(async () => {
-                // Send request to the API server 
-                var values = new Dictionary<string, string>
-                {
-                    { "AppUid", AppUid },
-                    { "MethodName", "getbalance" },
-                    { "WalletAddress", address }
-                };
-                string response = EthHttpClient.Post(ApiServerAddress, values); 
+                // Get balance from caching db 
+                string balanceCache = this.WalletCaching.GetBalanceFromCache(address); 
+                // bool converted = decimal.TryParse(balanceCache, out ethAmount); 
 
-                // Parse response 
-                EthApiOperation operation = System.Text.Json.JsonSerializer.Deserialize<EthApiOperation>(response);
-                ethAmount = operation.WalletBalance; 
+                // string balanceCache = string.Empty; 
+                bool converted = decimal.TryParse(balanceCache, out ethAmount); 
+
+                // 
+                if (string.IsNullOrEmpty(balanceCache) && !converted) 
+                {
+                    // Send request to the API server 
+                    var values = new Dictionary<string, string>
+                    {
+                        { "AppUid", AppUid },
+                        { "MethodName", "getbalance" },
+                        { "WalletAddress", address }
+                    };
+                    string response = EthHttpClient.Post(ApiServerAddress, values); 
+
+                    // Parse response 
+                    EthApiOperation operation = System.Text.Json.JsonSerializer.Deserialize<EthApiOperation>(response);
+                    ethAmount = operation.WalletBalance; 
+                    this.WalletCaching.InsertBalanceToCache(address, ethAmount.ToString()); 
+                }
             });
             task.Wait();
             return Task.FromResult($"{ethAmount} ETH"); 
