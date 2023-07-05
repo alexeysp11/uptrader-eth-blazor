@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using UptraderEth.Common; 
 using UptraderEth.Common.Models; 
 
 namespace UptraderEthBlazor.Data
@@ -11,7 +12,7 @@ namespace UptraderEthBlazor.Data
     /// </summary>
     public class WalletService
     {
-        private WalletCaching WalletCaching = new WalletCaching(); 
+        private WalletCaching WalletCaching; 
 
         private string AppUid; 
         private string ApiServerAddress;
@@ -22,6 +23,8 @@ namespace UptraderEthBlazor.Data
             AppUid = appUid; 
             ApiServerAddress = apiServerAddress; 
             UsePlaceholders = usePlaceholders; 
+
+            WalletCaching = new WalletCaching("mongodb://127.0.0.1:27017", "uptrader_eth_blazor", "wallets_cache_webapp"); 
         }
 
         /// <summary>
@@ -53,12 +56,9 @@ namespace UptraderEthBlazor.Data
             Task task = Task.Run(async () => {
                 // Get balance from caching db 
                 string balanceCache = this.WalletCaching.GetBalanceFromCache(address); 
-                // bool converted = decimal.TryParse(balanceCache, out ethAmount); 
-
-                // string balanceCache = string.Empty; 
                 bool converted = decimal.TryParse(balanceCache, out ethAmount); 
 
-                // 
+                // Send request if necessary 
                 if (string.IsNullOrEmpty(balanceCache) && !converted) 
                 {
                     // Send request to the API server 

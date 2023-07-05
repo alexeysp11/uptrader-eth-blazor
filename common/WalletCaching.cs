@@ -4,13 +4,20 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace UptraderEthBlazor.Data
+namespace UptraderEth.Common
 {
     public class WalletCaching 
     {
         private string ConnectionString { get; } = "mongodb://127.0.0.1:27017"; 
         private string DbName { get; } = "uptrader_eth_blazor"; 
         private string WalletCollection { get; } = "wallets_cache"; 
+
+        public WalletCaching(string connectionString, string dbName, string walletCollection)
+        {
+            ConnectionString = connectionString; 
+            DbName = dbName; 
+            WalletCollection = walletCollection; 
+        }
 
         private class WalletCache
         {

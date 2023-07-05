@@ -2,6 +2,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Nethereum.Web3; 
+using UptraderEth.Common; 
 
 namespace UptraderEth.EthApiServer
 {
@@ -10,6 +11,10 @@ namespace UptraderEth.EthApiServer
     /// </summary>
     public class EthNodeCommunication
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        private WalletCaching WalletCaching; 
         /// <summary>
         /// Address of the API node for retrieving ETH data 
         /// </summary>
@@ -27,10 +32,8 @@ namespace UptraderEth.EthApiServer
         /// <summary>
         /// Constructor of EthNodeCommunication
         /// </summary>
-        public EthNodeCommunication()
+        public EthNodeCommunication() : this("", true, "production")
         {
-            UseEthConnection = true; 
-            Environment = "production"; 
         }
         /// <summary>
         /// Constructor of EthNodeCommunication 
@@ -40,6 +43,8 @@ namespace UptraderEth.EthApiServer
             EthConnectionAddress = ethConnectionAddress; 
             UseEthConnection = useEthConnection; 
             Environment = environment; 
+
+            WalletCaching = new WalletCaching("mongodb://127.0.0.1:27017", "uptrader_eth_blazor", "wallets_cache_apiserver"); 
         }
 
         /// <summary>
@@ -51,18 +56,27 @@ namespace UptraderEth.EthApiServer
 
             decimal ethAmount = 0m; 
             Task task = Task.Run(async () => {
-                if (UseEthConnection && !string.IsNullOrEmpty(EthConnectionAddress))
-                {
-                    // ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+                // Get data from cache 
+                string balanceCache = this.WalletCaching.GetBalanceFromCache(address); 
+                bool converted = decimal.TryParse(balanceCache, out ethAmount); 
 
-                    var web3 = new Web3(EthConnectionAddress); 
-                    var balance = await web3.Eth.GetBalance.SendRequestAsync(address);
-                    ethAmount = Web3.Convert.FromWei(balance.Value); 
-                }
-                else 
-                {
-                    ethAmount = (new System.Random()).Next(0, 100); 
-                    System.Threading.Thread.Sleep(1000); 
+                // Get request if necessary 
+                if (string.IsNullOrEmpty(balanceCache) && !converted) 
+                {    
+                    if (UseEthConnection && !string.IsNullOrEmpty(EthConnectionAddress))
+                    {
+                        // ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+
+                        var web3 = new Web3(EthConnectionAddress); 
+                        var balance = await web3.Eth.GetBalance.SendRequestAsync(address);
+                        ethAmount = Web3.Convert.FromWei(balance.Value); 
+                    }
+                    else 
+                    {
+                        ethAmount = (new System.Random()).Next(0, 100); 
+                        System.Threading.Thread.Sleep(1000); 
+                    }
+                    this.WalletCaching.InsertBalanceToCache(address, ethAmount.ToString()); 
                 }
                 System.Console.WriteLine($"ethAmount: {ethAmount}"); 
             });
