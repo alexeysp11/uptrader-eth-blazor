@@ -1,1 +1,1 @@
-dotnet run --project apiserver/ApiServer.csproj
+dotnet run --project apiserver/UptraderEth.ApiServer.csproj

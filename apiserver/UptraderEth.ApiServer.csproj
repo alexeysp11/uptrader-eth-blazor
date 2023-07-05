@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../common/Common.csproj" />
+    <ProjectReference Include="../common/UptraderEth.Common.csproj" />
   </ItemGroup>  
 
   <ItemGroup>
