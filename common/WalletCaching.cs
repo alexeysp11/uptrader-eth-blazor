@@ -6,19 +6,14 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace UptraderEth.Common
 {
+    /// <summary>
+    /// Caching data associated with wallets.
+    /// </summary>
     public class WalletCaching 
     {
-        private string ConnectionString { get; } = "mongodb://127.0.0.1:27017"; 
-        private string DbName { get; } = "uptrader_eth_blazor"; 
-        private string WalletCollection { get; } = "wallets_cache"; 
-
-        public WalletCaching(string connectionString, string dbName, string walletCollection)
-        {
-            ConnectionString = connectionString; 
-            DbName = dbName; 
-            WalletCollection = walletCollection; 
-        }
-
+        /// <summary>
+        /// Cache model for wallet in database.
+        /// </summary>
         private class WalletCache
         {
             public ObjectId Id { get; set; }
@@ -33,13 +28,44 @@ namespace UptraderEth.Common
             public string UpdateDateTime { get; set; }
         }
 
+        /// <summary>
+        /// Mongo client.
+        /// </summary>
+        private MongoClient Client; 
+        /// <summary>
+        /// Connection string.
+        /// </summary>
+        private string ConnectionString { get; } 
+        /// <summary>
+        /// Database name.
+        /// </summary>
+        private string DbName { get; } 
+        /// <summary>
+        /// Name of the wallet collection.
+        /// </summary>
+        private string WalletCollection { get; } 
+
+        /// <summary>
+        /// Construstor.
+        /// </summary>
+        public WalletCaching(string connectionString, string dbName, string walletCollection)
+        {
+            ConnectionString = connectionString; 
+            DbName = dbName; 
+            WalletCollection = walletCollection; 
+
+            Client = new MongoClient(ConnectionString); 
+        }
+
+        /// <summary>
+        /// Method for getting balance from cache.
+        /// </summary>
         public string GetBalanceFromCache(string address)
         {
             string result = string.Empty; 
             try
             {
-                var client = new MongoClient(ConnectionString);
-                var walletCollection = client.GetDatabase(DbName).GetCollection<WalletCache>(WalletCollection);
+                var walletCollection = Client.GetDatabase(DbName).GetCollection<WalletCache>(WalletCollection);
                 var filter = Builders<WalletCache>.Filter.Eq("address", address);
                 var wallets = walletCollection.Find(filter).ToList();
                 return wallets.Count == 0 ? result : wallets.First().BalanceEth; 
@@ -51,15 +77,26 @@ namespace UptraderEth.Common
             return result; 
         }
 
+        /// <summary>
+        /// Method for saving balance in the cache.
+        /// </summary>
         public void InsertBalanceToCache(string address, string balanceEth)
         {
-            var client = new MongoClient(ConnectionString);
-            var walletCollection = client.GetDatabase(DbName).GetCollection<WalletCache>(WalletCollection);
+            // Check balance for the address and its last update 
             if (GetBalanceFromCache(address) == balanceEth) 
                 return; 
+            
+            // 
+            var walletCollection = Client.GetDatabase(DbName).GetCollection<WalletCache>(WalletCollection);
+
+            // Check if there's a wallet in the database 
+            // If wallet exists, update it 
+            // If wallet does not exist, insert it 
             walletCollection.InsertOne(new WalletCache 
             {
-                Address = address, BalanceEth = balanceEth, UpdateDateTime = System.DateTime.Now.ToString()
+                Address = address, 
+                BalanceEth = balanceEth, 
+                UpdateDateTime = System.DateTime.Now.ToString()
             });
         }
     }

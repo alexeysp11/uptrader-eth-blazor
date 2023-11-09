@@ -1,10 +1,31 @@
 # uptrader-eth-blazor 
 
-Read this in other languages: [English](README.md), [Russian/Русский](README.ru.md). 
+[English](README.md) | [Русский](README.ru.md)
 
-Blazor project that includes the page `Wallets`. 
+This project is a Blazor web application that allows users to view Ethereum wallet information and retrieve real-time balance data from an ETH node using Netehereum.Web3. 
+The communication with the ETH node is implemented as a separate API service for optimized performance.
+
+## Overall description 
+
+The project includes the page `Wallets`. 
 
 On the page `Wallets` there is table with columns: `Id`, `Address`, `Balance` (data could be sorted by balance).  
+
+### Goal
+
+The goal of the project is to create a Blazor web application that allows users to view and manage Ethereum wallets, retrieving real-time balance information from an ETH node.
+
+### Scope 
+
+The scope of the project includes designing and implementing the Wallets page with a table for viewing wallet information, integrating with Netehereum.Web3 for retrieving balance data, optimizing the page for fast performance, and creating a separate API service for communication with the ETH node.
+
+### Who can use this project
+
+This project can be used by individuals who want to manage their Ethereum wallets and track their balances, as well as developers who want to learn about integrating Blazor with Ethereum.
+
+### Possible limitations
+
+Possible limitations of this project could include potential challenges in optimizing the page for fast performance, issues with retrieving balance data from the ETH node, and the need for thorough testing to ensure accurate and reliable communication with the ETH node.
 
 ## Technical requirements 
 

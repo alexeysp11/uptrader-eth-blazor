@@ -3,6 +3,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace UptraderEth.Common 
 {
+    /// <summary>
+    /// Class that is responsible for using config files.
+    /// </summary>
     public class Configurator 
     {
         /// <summary>

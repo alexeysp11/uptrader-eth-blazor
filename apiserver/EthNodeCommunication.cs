@@ -61,8 +61,8 @@ namespace UptraderEth.EthApiServer
                 bool converted = decimal.TryParse(balanceCache, out ethAmount); 
 
                 // Get request if necessary 
-                if (string.IsNullOrEmpty(balanceCache) && !converted) 
-                {    
+                if (string.IsNullOrEmpty(balanceCache) || !converted) 
+                {
                     if (UseEthConnection && !string.IsNullOrEmpty(EthConnectionAddress))
                     {
                         // ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
