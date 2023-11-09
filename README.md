@@ -2,7 +2,7 @@
 
 [English](README.md) | [Русский](README.ru.md)
 
-This project is a Blazor web application that allows users to view Ethereum wallet information and retrieve real-time balance data from an ETH node using Netehereum.Web3. 
+This project is a Blazor web application that allows users to view Ethereum wallet information and retrieve real-time balance data from an ETH node using [Nethereum.Web3](https://github.com/Nethereum/Nethereum/tree/master/src/Nethereum.Web3). 
 The communication with the ETH node is implemented as a separate API service for optimized performance.
 
 ## Overall description 
@@ -17,7 +17,7 @@ The goal of the project is to create a Blazor web application that allows users 
 
 ### Scope 
 
-The scope of the project includes designing and implementing the Wallets page with a table for viewing wallet information, integrating with Netehereum.Web3 for retrieving balance data, optimizing the page for fast performance, and creating a separate API service for communication with the ETH node.
+The scope of the project includes designing and implementing the Wallets page with a table for viewing wallet information, integrating with [Nethereum.Web3](https://github.com/Nethereum/Nethereum/tree/master/src/Nethereum.Web3) for retrieving balance data, optimizing the page for fast performance, and creating a separate API service for communication with the ETH node.
 
 ### Who can use this project
 
@@ -29,7 +29,7 @@ Possible limitations of this project could include potential challenges in optim
 
 ## Technical requirements 
 
-- `Netehereum.Web3` should be used; 
+- [Nethereum.Web3](https://github.com/Nethereum/Nethereum/tree/master/src/Nethereum.Web3) should be used; 
 - The page should work fast; 
 - Balance is not stored in the database, and they could be retrieved from ETH node; 
 - ETH testnet Sepolia ([alchemy](https://www.alchemy.com/) and [infura](https://www.infura.io/) are recomended); 
